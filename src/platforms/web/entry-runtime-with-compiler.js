@@ -14,7 +14,9 @@ const idToTemplate = cached(id => {
   return el && el.innerHTML
 })
 
+// 保存原来的$mount
 const mount = Vue.prototype.$mount
+// 覆盖原来的$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
@@ -29,12 +31,14 @@ Vue.prototype.$mount = function (
     return this
   }
 
+  // 解析options
   const options = this.$options
   // resolve template/el and convert to render function
   if (!options.render) {
     let template = options.template
     if (template) {
       if (typeof template === 'string') {
+        // 如果template是选择器
         if (template.charAt(0) === '#') {
           template = idToTemplate(template)
           /* istanbul ignore if */
@@ -56,12 +60,14 @@ Vue.prototype.$mount = function (
     } else if (el) {
       template = getOuterHTML(el)
     }
+    // 如果存在模板，执行编译
     if (template) {
       /* istanbul ignore if */
       if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
         mark('compile')
       }
 
+      // 编译生成render函数
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,
@@ -79,6 +85,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
+  // 执行挂载，调用的是原始mount函数
   return mount.call(this, el, hydrating)
 }
 

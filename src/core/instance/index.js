@@ -14,7 +14,7 @@ function Vue (options) {
   this._init(options)
 }
 
-initMixin(Vue)
+initMixin(Vue)   // 通过混入的形式给Vue添加_init方法
 stateMixin(Vue)
 eventsMixin(Vue)
 lifecycleMixin(Vue)

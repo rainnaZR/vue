@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Vue.js example</title>
+    <script src="../../dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>初始化流程</h1>
+      <p>{{title}}</p>
+    </div>
+
+    <script>
+      // render => template => el
+      // 如果定义el，不需要执行$mount挂载
+      // 创建实例
+      const app = new Vue({
+          el: '#app',
+          data: {
+            title: 'init page'
+          }
+      })
+      console.log(app.$options.render)
+    </script>
+  </body>
+</html>

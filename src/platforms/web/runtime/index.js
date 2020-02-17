@@ -31,6 +31,7 @@ extend(Vue.options.directives, platformDirectives)
 extend(Vue.options.components, platformComponents)
 
 // install platform patch function
+// 指定补丁方法：把传入的虚拟dom转换为真实dom
 Vue.prototype.__patch__ = inBrowser ? patch : noop
 
 // public mount method
@@ -39,6 +40,7 @@ Vue.prototype.$mount = function (
   hydrating?: boolean
 ): Component {
   el = el && inBrowser ? query(el) : undefined
+  // 初始化，将首次渲染的结果替换el
   return mountComponent(this, el, hydrating)
 }
 
