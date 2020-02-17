@@ -34,6 +34,8 @@ export function toggleObserving (value: boolean) {
  * object's property keys into getter/setters that
  * collect dependencies and dispatch updates.
  */
+
+ // 每一个响应式对象都有一个ob
 export class Observer {
   value: any;
   dep: Dep;
@@ -41,17 +43,25 @@ export class Observer {
 
   constructor (value: any) {
     this.value = value
+    // 为什么Observer里面声明dep?
+    // object里面新增或删除属性
+    // array中有变更方法
     this.dep = new Dep()
     this.vmCount = 0
+    // 设置一个__ob__属性引用当前Observer的实例
     def(value, '__ob__', this)
+    // 判断类型
     if (Array.isArray(value)) {
+      // 替换数组原型
       if (hasProto) {
         protoAugment(value, arrayMethods)
       } else {
         copyAugment(value, arrayMethods, arrayKeys)
       }
+      // 如果数组里面的值是对象，还需要做响应处理
       this.observeArray(value)
     } else {
+      // 对象直接做响应化处理
       this.walk(value)
     }
   }
@@ -111,6 +121,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (!isObject(value) || value instanceof VNode) {
     return
   }
+  // ob观察者，已经存在就直接返回
   let ob: Observer | void
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
@@ -139,6 +150,7 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
+  // 和key一一对应，一个key对应一个大管家Dep
   const dep = new Dep()
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -153,15 +165,20 @@ export function defineReactive (
     val = obj[key]
   }
 
+  // 属性拦截，只要是对象类型都会返回childOb
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
+      // 获取key对应的value值
       const value = getter ? getter.call(obj) : val
+      // 如果存在依赖
       if (Dep.target) {
+        // 收集依赖
         dep.depend()
         if (childOb) {
+          // 如果存在childOb, childOb收集这个依赖
           childOb.dep.depend()
           if (Array.isArray(value)) {
             dependArray(value)
@@ -187,7 +204,9 @@ export function defineReactive (
       } else {
         val = newVal
       }
+      // 如果新值是对象，则需要进行响应化
       childOb = !shallow && observe(newVal)
+      // 通知更新
       dep.notify()
     }
   })

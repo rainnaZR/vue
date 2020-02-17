@@ -25,8 +25,11 @@ methodsToPatch.forEach(function (method) {
   // cache original method
   const original = arrayProto[method]
   def(arrayMethods, method, function mutator (...args) {
+    // 执行之前的方法
     const result = original.apply(this, args)
+    // 通知
     const ob = this.__ob__
+    // 如果是插入操作，还需要对新数据做响应化处理
     let inserted
     switch (method) {
       case 'push':

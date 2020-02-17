@@ -7,20 +7,26 @@
   <body>
     <div id="app">
       <h1>初始化流程</h1>
-      <p>{{title}}</p>
+      <p>{{page.title}}</p>
+      <p>{{page.age}}</p>
     </div>
 
     <script>
       // render => template => el
       // 如果定义el，不需要执行$mount挂载
       // 创建实例
+      // Oberver: 2
+      // Dep: 2，一个属性对应一个Dep
+      // Watcher: 1，一个组件对应一个watcher
       const app = new Vue({
           el: '#app',
           data: {
-            title: 'init page'
+            page: {
+              title: 'init page',
+              age: 20
+            }
           }
       })
-      console.log(app.$options.render)
     </script>
   </body>
 </html>
